@@ -1,0 +1,74 @@
+---
+title: "Weekly GitHub Contributions"
+format: 
+  html:
+    embed-resources: true
+    self-contained: true
+filters:
+  - shiny
+execute:
+  echo: false
+---
+
+## Weekly GitHub Contributions
+
+This interactive report displays your GitHub activity, including **pull requests, issues, and reviews**.  
+Use the dropdown menu to filter by repository.
+
+```{r setup, echo=FALSE}
+library(shiny)
+library(httr)
+library(jsonlite)
+library(dplyr)
+library(gt)
+
+# Function to fetch GitHub contributions
+get_contributions <- function() {
+  gh_token <- Sys.getenv("GH_TOKEN")  # Make sure this is set in your environment
+  gh_user <- "YOUR_GITHUB_USERNAME"   # Replace with your GitHub username
+
+  response <- GET(
+    paste0("https://api.github.com/users/", gh_user, "/events?per_page=100"),
+    add_headers(Authorization = paste("token", gh_token))
+  )
+  
+  events <- content(response, as = "parsed", simplifyVector = TRUE)
+
+  contributions <- data.frame(
+    repo = sapply(events, function(x) x$repo$name),
+    type = sapply(events, function(x) x$type),
+    title = sapply(events, function(x) x$payload$issue$title %||% x$payload$pull_request$title),
+    url = sapply(events, function(x) x$payload$issue$html_url %||% x$payload$pull_request$html_url)
+  ) %>% filter(type %in% c("PullRequestEvent", "IssuesEvent", "PullRequestReviewEvent"))
+
+  return(contributions)
+}
+
+# Shiny App UI & Server
+shinyApp(
+  ui = fluidPage(
+    titlePanel("Weekly GitHub Contributions"),
+    sidebarLayout(
+      sidebarPanel(
+        selectInput("repo_filter", "Filter by Repository:", choices = NULL, selected = NULL, multiple = TRUE)
+      ),
+      mainPanel(
+        tableOutput("contributions_table")
+      )
+    )
+  ),
+  server = function(input, output, session) {
+    contributions <- get_contributions()
+
+    updateSelectInput(session, "repo_filter", choices = unique(contributions$repo))
+
+    output$contributions_table <- renderTable({
+      if (is.null(input$repo_filter) || length(input$repo_filter) == 0) {
+        contributions
+      } else {
+        contributions %>% filter(repo %in% input$repo_filter)
+      }
+    })
+  }
+)
+
