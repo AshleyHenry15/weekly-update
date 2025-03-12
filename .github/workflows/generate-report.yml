@@ -27,7 +27,7 @@ jobs:
         quarto render contributions.qmd --to html --output report.html
     
     - name: Upload the report as an artifact
-      uses: actions/upload-artifact@v2  # Using version v2 of upload-artifact (this should work)
+      uses: actions/upload-artifact@v2  # Use v2 for artifact upload
       with:
         name: github-contributions-report
         path: report.html
