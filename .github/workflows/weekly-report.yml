@@ -17,8 +17,8 @@ jobs:
       # Install Quarto v1.6.39
       - name: Install Quarto v1.6.39
         run: |
-          wget https://github.com/quarto-dev/quarto-cli/releases/download/v1.6.39/quarto-1.6.39-linux-amd64.deb
-          sudo dpkg -i quarto-1.6.39-linux-amd64.deb
+          wget https://github.com/quarto-dev/quarto-cli/releases/download/v1.6.42/quarto-1.6.42-linux-amd64.deb
+          sudo dpkg -i quarto-1.6.42-linux-amd64.deb
           sudo apt-get update
           sudo apt-get install -f
 
