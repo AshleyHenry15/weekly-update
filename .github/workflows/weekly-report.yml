@@ -14,11 +14,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      # Install Quarto
-      - name: Install Quarto
+      # Install Quarto v1.6.39
+      - name: Install Quarto v1.6.39
         run: |
-          wget https://github.com/quarto-dev/quarto-cli/releases/download/v1.0.0/quarto-1.0.0-linux-amd64.deb
-          sudo dpkg -i quarto-1.0.0-linux-amd64.deb
+          wget https://github.com/quarto-dev/quarto-cli/releases/download/v1.6.39/quarto-1.6.39-linux-amd64.deb
+          sudo dpkg -i quarto-1.6.39-linux-amd64.deb
           sudo apt-get update
           sudo apt-get install -f
 
