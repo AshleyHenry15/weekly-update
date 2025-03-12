@@ -11,8 +11,8 @@ jobs:
     
     steps:
     - name: Check out the repository
-      uses: actions/checkout@v3
-      
+      uses: actions/checkout@v3  # Latest version of checkout
+    
     - name: Set up R
       uses: r-lib/actions/setup-r@v2
       with:
@@ -27,7 +27,7 @@ jobs:
         quarto render contributions.qmd --to html --output report.html
     
     - name: Upload the report as an artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v2  # Using version v2 of upload-artifact (this should work)
       with:
         name: github-contributions-report
         path: report.html
