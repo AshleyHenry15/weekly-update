@@ -22,23 +22,22 @@ jobs:
           sudo apt-get update
           sudo apt-get install -f
 
-      # Set up Python environment (if needed)
+      # Set up Python environment
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: '3.9'
 
-      # Install necessary Python dependencies (if needed)
+      # Install necessary Python dependencies (including yagmail)
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests  # Install any additional dependencies you need
+          pip install requests yagmail  # Install yagmail and other dependencies you need
 
-      # Install R and dependencies (if needed for the Shiny app)
+      # Install R and dependencies (for Shiny and rsconnect)
       - name: Install R
         uses: r-lib/actions/setup-r@v2
 
-      # Install Quarto dependencies
       - name: Install Quarto dependencies
         run: |
           R -e "install.packages('shiny')"
@@ -49,7 +48,17 @@ jobs:
         run: |
           quarto render report.qmd  # Replace 'report.qmd' with the actual file name
 
-      # Send the email (assuming you have a send_email.py file)
-      - name: Send Email
+      # Deploy to ShinyApps.io
+      - name: Deploy to ShinyApps.io
         run: |
-          python send_email.py
+          R -e "
+            library(rsconnect);
+            setAccountInfo(name = Sys.getenv('SHINYAPPS_USERNAME'),
+                           token = Sys.getenv('SHINYAPPS_TOKEN'),
+                           secret = Sys.getenv('SHINYAPPS_SECRET'));
+            deployApp('./')  # Path to the app directory, update if needed
+          "
+        env:
+          SHINYAPPS_USERNAME: ${{ secrets.SHINYAPPS_USERNAME }}
+          SHINYAPPS_TOKEN: ${{ secrets.SHINYAPPS_TOKEN }}
+          SHINYAPPS_SECRET: ${{ s
