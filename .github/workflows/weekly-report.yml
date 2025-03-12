@@ -22,17 +22,17 @@ jobs:
           sudo apt-get update
           sudo apt-get install -f
 
-      # Set up Python environment
+      # Set up Python environment (if needed)
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: '3.9'
 
-      # Install necessary Python dependencies (including yagmail)
+      # Install necessary Python dependencies (if needed)
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests yagmail  # Install yagmail and other dependencies you need
+          pip install requests  # Install any additional dependencies you need
 
       # Install R and dependencies (for Shiny and rsconnect)
       - name: Install R
@@ -61,4 +61,9 @@ jobs:
         env:
           SHINYAPPS_USERNAME: ${{ secrets.SHINYAPPS_USERNAME }}
           SHINYAPPS_TOKEN: ${{ secrets.SHINYAPPS_TOKEN }}
-          SHINYAPPS_SECRET: ${{ s
+          SHINYAPPS_SECRET: ${{ secrets.SHINYAPPS_SECRET }}
+
+      # Send the email with the weekly update and Shiny app link
+      - name: Send Email
+        run: |
+          python send_email.py  # Make sure this script sends the email with the link to the Shiny app
