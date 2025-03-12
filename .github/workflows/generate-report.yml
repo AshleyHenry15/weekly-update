@@ -7,7 +7,7 @@ on:
 
 jobs:
   generate_report:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04  # Use a different Ubuntu version to avoid caching issues
     
     steps:
     - name: Check out the repository
@@ -27,7 +27,7 @@ jobs:
         quarto render contributions.qmd --to html --output report.html
     
     - name: Upload the report as an artifact
-      uses: actions/upload-artifact@v2  # Use v2 for artifact upload
+      uses: actions/upload-artifact@v2  # Ensure this is explicitly v2 for stability
       with:
         name: github-contributions-report
         path: report.html
