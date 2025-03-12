@@ -1,0 +1,14 @@
+---
+title: "Weekly GitHub Activity Report"
+output: 
+  html_document:
+    code_folding: hide
+---
+
+```{r}
+library(jsonlite)
+activity_data <- fromJSON("activity_data.json")
+
+# Print the report
+activity_data
+
